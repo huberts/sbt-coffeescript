@@ -11,8 +11,8 @@ scalaVersion := "2.11.7"
 scalacOptions += "-feature"
 
 libraryDependencies ++= Seq(
-  "org.webjars" % "coffee-script-node" % "1.7.1",
-  "org.webjars" % "mkdirp" % "0.3.5"
+  "org.webjars" % "coffee-script-node" % "1.11.0",
+  "org.webjars" % "mkdirp" % "0.5.0"
 )
 
 resolvers ++= Seq(
