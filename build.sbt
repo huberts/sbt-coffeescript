@@ -2,7 +2,7 @@ sbtPlugin := true
 
 organization := "pl.systherminfo"
 
-name := "sbt-coffeescript-component"
+name := "sbt-coffeescriptcontroller"
 
 version := "1.0"
 
