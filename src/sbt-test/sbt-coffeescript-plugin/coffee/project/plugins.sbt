@@ -1,4 +1,4 @@
-addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescriptcontroller" % sys.props("project.version"))
+addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescriptcomponent" % sys.props("project.version"))
 
 resolvers ++= Seq(
   Resolver.mavenLocal,
