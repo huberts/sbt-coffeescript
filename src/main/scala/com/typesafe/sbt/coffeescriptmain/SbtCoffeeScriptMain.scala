@@ -12,6 +12,7 @@ object Import {
     val coffeescriptmain = TaskKey[Seq[File]]("coffeescriptmain", "Invoke the CoffeeScript compiler.")
     val coffeescriptcontroller = TaskKey[Seq[File]]("coffeescriptcontroller", "Invoke the CoffeeScript compiler.")
     val coffeescriptcomponent = TaskKey[Seq[File]]("coffeescriptcomponent", "Invoke the CoffeeScript compiler.")
+    val coffeescriptgiobject = TaskKey[Seq[File]]("coffeescriptgiobject", "Invoke the CoffeeScript compiler.")
 
     val bare = SettingKey[Boolean]("coffeescript-bare", "Compiles JavaScript that isn't wrapped in a function.")
     val sourceMap = SettingKey[Boolean]("coffeescript-source-map", "Outputs a v3 sourcemap.")
@@ -42,7 +43,7 @@ object SbtCoffeeScriptMain extends AutoPlugin {
 
   val coffeescriptmainSettings = coffeeScriptUnscopedSettings ++ Seq(
     includeFilter := "*.coffee",
-    excludeFilter := "*Component.coffee" | "*Controller.coffee"
+    excludeFilter := "*Component.coffee" | "*Controller.coffee" | "giObject*.coffee"
   )
 
   val coffeescriptcontrollerSettings = coffeeScriptUnscopedSettings ++ Seq(
@@ -51,6 +52,10 @@ object SbtCoffeeScriptMain extends AutoPlugin {
 
   val coffeescriptcomponentSettings = coffeeScriptUnscopedSettings ++ Seq(
     includeFilter := "*Component.coffee"
+  )
+
+  val coffeescriptobjectSettings = coffeeScriptUnscopedSettings ++ Seq(
+    includeFilter := "giObject*.coffee"
   )
 
   override def projectSettings = Seq(
@@ -101,6 +106,20 @@ object SbtCoffeeScriptMain extends AutoPlugin {
   ) ++ SbtJsTask.addJsSourceFileTasks(coffeescriptcomponent) ++ Seq(
     coffeescriptcomponent in Assets := (coffeescriptcomponent in Assets).dependsOn(webModules in Assets).value,
     coffeescriptcomponent in TestAssets := (coffeescriptcomponent in TestAssets).dependsOn(webModules in TestAssets).value
-  )
 
+  ) ++ inTask(coffeescriptgiobject)(
+    SbtJsTask.jsTaskSpecificUnscopedSettings ++
+      inConfig(Assets)(coffeescriptobjectSettings) ++
+      inConfig(TestAssets)(coffeescriptobjectSettings) ++
+      Seq(
+        moduleName := "coffeescript",
+        shellFile := getClass.getClassLoader.getResource("coffee.js"),
+
+        taskMessage in Assets := "CoffeeScript compiling giObject",
+        taskMessage in TestAssets := "CoffeeScript test compiling giObject"
+      )
+  ) ++ SbtJsTask.addJsSourceFileTasks(coffeescriptgiobject) ++ Seq(
+    coffeescriptgiobject in Assets := (coffeescriptgiobject in Assets).dependsOn(webModules in Assets).value,
+    coffeescriptgiobject in TestAssets := (coffeescriptgiobject in TestAssets).dependsOn(webModules in TestAssets).value
+  )
 }
